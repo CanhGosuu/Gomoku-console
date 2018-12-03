@@ -190,14 +190,6 @@ public class Board {
         return ALL_POS.stream().noneMatch(p -> this.grid[p.row][p.col] == EMPTY_CHAR);
     }
 
-    private boolean isEmpty(int index) {
-        if (index < 0 || index >= N_ROW * N_COL) {
-            return false;
-        }
-        Pos pos = new Pos(index);
-        return this.grid[pos.row][pos.col] == EMPTY_CHAR;
-    }
-
     public long hash() {
         return this.hash;
     }
@@ -340,6 +332,7 @@ public class Board {
         final Scanner cin = new Scanner(System.in);
         cin.useDelimiter("\n");
         cin.nextLine();
+        cin.close();
     }
 
     public enum Status {
