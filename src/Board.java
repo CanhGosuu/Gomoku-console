@@ -332,7 +332,7 @@ public class Board {
         final Scanner cin = new Scanner(System.in);
         cin.useDelimiter("\n");
         cin.nextLine();
-        cin.close();
+        // cin.close();
     }
 
     public enum Status {
