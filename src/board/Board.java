@@ -303,12 +303,15 @@ public class Board {
         System.out.println((this.player1.step() == this.player2.step() ? " " : "*") + buildPlayerInfo(this.player2));
         System.out.println();
         System.out.print("    ");
-        for (int i = 0; i < N_COL; i++) {
+        for (int i = 0; i < 9; i++) {
             System.out.print((i + 1) + "   ");
+        }
+        for (int i = 9; i < N_COL; i++) {
+            System.out.print((i + 1) + "  ");
         }
         System.out.println();
         for (int i = 0; i < N_ROW; i++) {
-            System.out.print((i + 1) + (i == 9 ? "  " : "   "));
+            System.out.print((i + 1) + (i >= 9 ? "  " : "   "));
             for (int j = 0; j < N_COL; j++) {
                 System.out.print(this.grid[i][j] + "   ");
             }
