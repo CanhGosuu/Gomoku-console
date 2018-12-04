@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+import board.*;
+import player.*;
+
 /**
  * Created by Canh on 3/12/2018.
  */

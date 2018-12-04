@@ -1,6 +1,8 @@
+package board;
+
 import java.util.*;
 import java.util.stream.Collectors;
-
+import player.*;
 /**
  * Created by Canh on 3/12/2018.
  */
@@ -17,7 +19,15 @@ public class Board {
     private static final int[][] SCORE_TABLE = { { 1, 1, 1 }, { 5, 10, 20 }, { 10, 500, 1000 }, { 25, 5000, 10000 },
             { 1000000, 1000000, 1000000 } };
 
-    private final GameStatus status;
+    public static int getnRow() {
+		return N_ROW;
+	}
+
+	public static int getnCol() {
+		return N_COL;
+	}
+
+	private final GameStatus status;
     private final char[][] grid;
     public final Player player1;
     public final Player player2;
@@ -35,11 +45,11 @@ public class Board {
         this.player1 = other.player1;
         this.player2 = other.player2;
         this.grid = copyOf(other.grid);
-        this.status = new GameStatus(other.status.status, other.status.winner, other.status.winningSet);
+        this.status = new GameStatus(other.status.getStatus(), other.status.getWinner(), other.status.getWinningSet());
         this.hash = other.hash;
     }
 
-    private static char[][] copyOf(char[][] src) {
+	private static char[][] copyOf(char[][] src) {
         int length = src.length;
         char[][] target = new char[length][src[0].length];
         for (int i = 0; i < length; i++) {
@@ -115,16 +125,16 @@ public class Board {
     }
 
     public boolean mark(Pos pos, Player player) {
-        if ((pos.row < 0 || pos.row > N_ROW - 1) || (pos.col < 0 || pos.col > N_COL - 1)) {
+        if ((pos.getRow() < 0 || pos.getRow() > N_ROW - 1) || (pos.getCol() < 0 || pos.getCol() > N_COL - 1)) {
             System.out.println("Row must between 1 and " + N_ROW + ", Col must between 1 and " + N_COL);
             return false;
         }
-        if (this.grid[pos.row][pos.col] != EMPTY_CHAR) {
-            System.out.println(pos + "=" + this.grid[pos.row][pos.col] + " is not empty");
+        if (this.grid[pos.getRow()][pos.getCol()] != EMPTY_CHAR) {
+            System.out.println(pos + "=" + this.grid[pos.getRow()][pos.getCol()] + " is not empty");
             return false;
         }
-        this.grid[pos.row][pos.col] = player.marker;
-        this.hash ^= RANDOM_TABLE[pos.index][player == this.player1 ? 0 : 1];
+        this.grid[pos.getRow()][pos.getCol()] = player.marker;
+        this.hash ^= RANDOM_TABLE[pos.getIndex()][player == this.player1 ? 0 : 1];
         scanGroups();
         selfCheck();
         return true;
@@ -156,7 +166,7 @@ public class Board {
             Set<Pos> group2 = new HashSet<>();
             for (int i = 0; i < band.size(); i++) {
                 Pos pos = band.get(i);
-                if (this.grid[pos.row][pos.col] == this.player1.marker) {
+                if (this.grid[pos.getRow()][pos.getCol()] == this.player1.marker) {
                     group1.add(pos);
                     // last one trigger
                     if (i == band.size() - 1) {
@@ -168,7 +178,7 @@ public class Board {
                         group1 = new HashSet<>();
                     }
                 }
-                if (this.grid[pos.row][pos.col] == this.player2.marker) {
+                if (this.grid[pos.getRow()][pos.getCol()] == this.player2.marker) {
                     group2.add(pos);
                     // last one trigger
                     if (i == band.size() - 1) {
@@ -187,7 +197,7 @@ public class Board {
     }
 
     private boolean isDraw() {
-        return ALL_POS.stream().noneMatch(p -> this.grid[p.row][p.col] == EMPTY_CHAR);
+        return ALL_POS.stream().noneMatch(p -> this.grid[p.getRow()][p.getCol()] == EMPTY_CHAR);
     }
 
     public long hash() {
@@ -199,15 +209,15 @@ public class Board {
     }
 
     public Set<Pos> getChildPos() {
-        return ALL_POS.stream().filter(p -> this.grid[p.row][p.col] == EMPTY_CHAR && hasPlayerAdjacent(p))
+        return ALL_POS.stream().filter(p -> this.grid[p.getRow()][p.getCol()] == EMPTY_CHAR && hasPlayerAdjacent(p))
                 .collect(Collectors.toSet());
     }
 
     private boolean hasPlayerAdjacent(Pos pos) {
-        int rowL = pos.row - AVAILABLE_DISTANCE < 0 ? 0 : pos.row - AVAILABLE_DISTANCE;
-        int colL = pos.col - AVAILABLE_DISTANCE < 0 ? 0 : pos.col - AVAILABLE_DISTANCE;
-        int rowH = pos.row + AVAILABLE_DISTANCE > N_ROW ? N_ROW : pos.row + AVAILABLE_DISTANCE;
-        int colH = pos.col + AVAILABLE_DISTANCE > N_COL ? N_COL : pos.col + AVAILABLE_DISTANCE;
+        int rowL = pos.getRow() - AVAILABLE_DISTANCE < 0 ? 0 : pos.getRow() - AVAILABLE_DISTANCE;
+        int colL = pos.getCol() - AVAILABLE_DISTANCE < 0 ? 0 : pos.getCol() - AVAILABLE_DISTANCE;
+        int rowH = pos.getRow() + AVAILABLE_DISTANCE > N_ROW ? N_ROW : pos.getRow() + AVAILABLE_DISTANCE;
+        int colH = pos.getCol() + AVAILABLE_DISTANCE > N_COL ? N_COL : pos.getCol() + AVAILABLE_DISTANCE;
 
         for (int i = rowL; i < rowH; i++) {
             for (int j = colL; j < colH; j++) {
@@ -221,7 +231,7 @@ public class Board {
 
     public int evaluate(Player player, int ply) {
         if (this.status.isWinning()) {
-            return (player == this.status.winner) ? (Integer.MAX_VALUE - 1 - ply) : (Integer.MIN_VALUE + 1 + ply);
+            return (player == this.status.getWinner()) ? (Integer.MAX_VALUE - 1 - ply) : (Integer.MIN_VALUE + 1 + ply);
         } else if (this.status.isDraw()) {
             return 0;
         } else {
@@ -247,20 +257,20 @@ public class Board {
         poses.sort(Comparator.comparing(Pos::getIndex));
         Pos min = poses.get(0);
         Pos max = poses.get(poses.size() - 1);
-        if (min.row == max.row) {
-            return (min.col > 0 && this.grid[min.row][min.col - 1] == EMPTY_CHAR ? 1 : 0)
-                    + (max.col < N_COL - 1 && this.grid[min.row][max.col + 1] == EMPTY_CHAR ? 1 : 0);
-        } else if (min.col == max.col) {
-            return (min.row > 0 && this.grid[min.row - 1][min.col] == EMPTY_CHAR ? 1 : 0)
-                    + (max.row < N_ROW - 1 && this.grid[max.row + 1][min.col] == EMPTY_CHAR ? 1 : 0);
+        if (min.getRow() == max.getRow()) {
+            return (min.getCol() > 0 && this.grid[min.getRow()][min.getCol() - 1] == EMPTY_CHAR ? 1 : 0)
+                    + (max.getCol() < N_COL - 1 && this.grid[min.getRow()][max.getCol() + 1] == EMPTY_CHAR ? 1 : 0);
+        } else if (min.getCol() == max.getCol()) {
+            return (min.getRow() > 0 && this.grid[min.getRow() - 1][min.getCol()] == EMPTY_CHAR ? 1 : 0)
+                    + (max.getRow() < N_ROW - 1 && this.grid[max.getRow() + 1][min.getCol()] == EMPTY_CHAR ? 1 : 0);
         } else {
-            if (min.col < max.col) {
-                return (min.row > 0 && min.col > 0 && this.grid[min.row - 1][min.col - 1] == EMPTY_CHAR ? 1 : 0)
-                        + (max.row < N_ROW - 1 && max.col < N_COL - 1
-                                && this.grid[max.row + 1][max.col + 1] == EMPTY_CHAR ? 1 : 0);
+            if (min.getCol() < max.getCol()) {
+                return (min.getRow() > 0 && min.getCol() > 0 && this.grid[min.getRow() - 1][min.getCol() - 1] == EMPTY_CHAR ? 1 : 0)
+                        + (max.getRow() < N_ROW - 1 && max.getCol() < N_COL - 1
+                                && this.grid[max.getRow() + 1][max.getCol() + 1] == EMPTY_CHAR ? 1 : 0);
             } else {
-                return (min.row > 0 && min.col < N_COL - 1 && this.grid[min.row - 1][min.col + 1] == EMPTY_CHAR ? 1 : 0)
-                        + (max.row < N_ROW - 1 && max.col > 0 && this.grid[max.row + 1][max.col - 1] == EMPTY_CHAR ? 1
+                return (min.getRow() > 0 && min.getCol() < N_COL - 1 && this.grid[min.getRow() - 1][min.getCol() + 1] == EMPTY_CHAR ? 1 : 0)
+                        + (max.getRow() < N_ROW - 1 && max.getCol() > 0 && this.grid[max.getRow() + 1][max.getCol() - 1] == EMPTY_CHAR ? 1
                                 : 0);
             }
         }
@@ -309,7 +319,7 @@ public class Board {
         if (this.status.isGameOver()) {
             if (this.status.isWinning()) {
                 System.out.println(
-                        this.status.winner + " is the WINNER(" + this.status.winningSet + "), congratulations!");
+                        this.status.getWinner() + " is the WINNER(" + this.status.getWinningSet() + "), congratulations!");
             } else {
                 System.out.println("You both are so good, but game is draw!");
             }
@@ -338,93 +348,4 @@ public class Board {
     public enum Status {
         P1_WIN, P2_WIN, DRAW, ONGOING
     }
-
-    public static class Pos {
-        private final int row;
-        private final int col;
-        private final int index;
-
-        Pos(int row, int col) {
-            this.row = row;
-            this.col = col;
-            this.index = row * N_ROW + col;
-        }
-
-        Pos(int index) {
-            this.index = index;
-            this.row = index / N_ROW;
-            this.col = index - this.row * N_ROW;
-        }
-
-        public int getRow() {
-            return row;
-        }
-
-        public int getCol() {
-            return col;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + (this.row + 1) + ", " + (this.col + 1) + ")";
-        }
-    }
-
-    public static class GameStatus {
-        private Status status;
-        private Player winner;
-        private Set<Pos> winningSet;
-
-        public GameStatus(Status status, Player winner, Set<Pos> winningSet) {
-            super();
-            this.status = status;
-            this.winner = winner;
-            this.winningSet = winningSet;
-        }
-
-        public Status getStatus() {
-            return status;
-        }
-
-        public Player getWinner() {
-            return winner;
-        }
-
-        public Set<Pos> getWinningSet() {
-            return winningSet;
-        }
-
-        public void setStatus(Status status) {
-            this.status = status;
-        }
-
-        public void setWinner(Player winner) {
-            this.winner = winner;
-        }
-
-        public void setWinningSet(Set<Pos> winningSet) {
-            this.winningSet = winningSet;
-        }
-
-        @Override
-        public String toString() {
-            return "GameStatus [status=" + status + ", winner=" + winner + ", winningSet=" + winningSet + "]";
-        }
-
-        public boolean isGameOver() {
-            return this.status != Status.ONGOING;
-        }
-
-        public boolean isDraw() {
-            return this.status == Status.DRAW;
-        }
-
-        public boolean isWinning() {
-            return this.status == Status.P1_WIN || this.status == Status.P2_WIN;
-        }
-    }
-}
+   }

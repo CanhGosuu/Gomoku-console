@@ -1,4 +1,7 @@
+package player;
 import java.util.Scanner;
+import board.Board;
+import board.Pos;
 
 /**
  * Created by Canh on 3/12/2018.
@@ -23,6 +26,6 @@ public class HumanPlayer extends Player {
             col = CIN.next();
         }
 
-        return new Move(0, new Board.Pos(Integer.parseInt(row) - 1, Integer.parseInt(col) - 1));
+        return new Move(0, new Pos(Integer.parseInt(row) - 1, Integer.parseInt(col) - 1));
     }
 }

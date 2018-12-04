@@ -1,7 +1,10 @@
+package player;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import board.*;
 
 /**
  * Created by Canh on 3/12/2018.
@@ -29,7 +32,7 @@ public class MinimaxPlayer extends Player {
     }
 
     private Move first() {
-        return new Move(0, new Board.Pos(Board.N_ROW / 4 + RANDOM.nextInt(Board.N_ROW) / 2,
+        return new Move(0, new Pos(Board.N_ROW / 4 + RANDOM.nextInt(Board.N_ROW) / 2,
                 Board.N_COL / 4 + RANDOM.nextInt(Board.N_COL) / 2));
     }
 
@@ -48,10 +51,10 @@ public class MinimaxPlayer extends Player {
             return board.evaluate(this, this.depth - depth);
         }
 
-        Board.Pos bestPos = null;
+        Pos bestPos = null;
         int v = (this == player) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        List<Board.Pos> childPos = sortChildPos(board);
-        for (Board.Pos pos : childPos) {
+        List<Pos> childPos = sortChildPos(board);
+        for (Pos pos : childPos) {
             Board bd = new Board(board);
             bd.mark(pos, player);
             int w = alphaBeta(bd, depth - 1, alpha, beta, bd.getEnemy(player));
@@ -83,10 +86,10 @@ public class MinimaxPlayer extends Player {
         return v;
     }
 
-    private List<Board.Pos> sortChildPos(Board board) {
-        return board.getChildPos().stream().sorted(new Comparator<Board.Pos>() {
+    private List<Pos> sortChildPos(Board board) {
+        return board.getChildPos().stream().sorted(new Comparator<Pos>() {
             @Override
-            public int compare(Board.Pos o1, Board.Pos o2) {
+            public int compare(Pos o1, Pos o2) {
                 return Integer.compare(MinimaxPlayer.this.history[o2.getRow()][o2.getCol()],
                         MinimaxPlayer.this.history[o1.getRow()][o1.getCol()]);
             }

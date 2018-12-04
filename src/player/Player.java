@@ -1,13 +1,15 @@
+package player;
 import java.util.ArrayList;
 import java.util.List;
 
+import board.*;
 /**
  * Created by Canh on 3/12/2018.
  */
 public abstract class Player {
     public final char marker;
     private final List<Long> times;
-    private final List<Board.Pos> path;
+    private final List<Pos> path;
 
     public Player(char marker) {
         this.marker = marker;
@@ -30,14 +32,14 @@ public abstract class Player {
         return this.path.size();
     }
 
-    public Board.Pos getLastPos() {
+    public Pos getLastPos() {
         if (this.path.size() <= 0) {
             return null;
         }
         return this.path.get(this.path.size() - 1);
     }
 
-    public Board.Pos next(Board board) {
+    public Pos next(Board board) {
         long start = System.nanoTime();
         Move move = decide(board);
         while (!board.mark(move.getNext(), this)) {
@@ -57,15 +59,15 @@ public abstract class Player {
     }
 
     protected class Move implements Comparable<Move> {
-        private final Board.Pos next;
+        private final Pos next;
         private final int score;
 
-        public Move(int score, Board.Pos next) {
+        public Move(int score, Pos next) {
             this.score = score;
             this.next = next;
         }
 
-        public Board.Pos getNext() {
+        public Pos getNext() {
             return next;
         }
 
