@@ -6,7 +6,7 @@ import player.*;
 
 /**
  * @author CanhGosuu
- *
+ * @done? quite good but not evaluate
  */
 public class Board {
 	private static final int N_ROW = 15;
@@ -142,7 +142,7 @@ public class Board {
 	}
 
 	/**
-	 * check trạng trái sau mỗi lần đánh 
+	 * check trạng trái sau mỗi lần đánh
 	 */
 	private void selfCheck() {
 		Set<Set<Pos>> groupsOfP1 = GROUPS_CACHE.get(this.player1);
@@ -204,7 +204,7 @@ public class Board {
 	}
 
 	/**
-	 * @return còn ô trống hay không
+	 * @return đã hết đất cho 2 thằng múa?
 	 */
 	private boolean isDraw() {
 		return ALL_POS.stream().noneMatch(p -> this.grid[p.getRow()][p.getCol()] == EMPTY_CHAR);
@@ -242,9 +242,15 @@ public class Board {
 		return false;
 	}
 
-	public int evaluate(Player player, int ply) {
+	/**
+	 * @param player
+	 * @param _depth: độ sâu cao nhất trừ độ sâu của điểm đang xét=> c
+	 * @return	điểm đánh giá của các ứng cử viên 
+	 */
+	public int evaluate(Player player, int _depth) {
 		if (this.status.isWinning()) {
-			return (player == this.status.getWinner()) ? (Integer.MAX_VALUE - 1 - ply) : (Integer.MIN_VALUE + 1 + ply);
+			return (player == this.status.getWinner()) ? (Integer.MAX_VALUE - 1 - _depth)
+					: (Integer.MIN_VALUE + 1 + _depth);
 		} else if (this.status.isDraw()) {
 			return 0;
 		} else {
@@ -254,9 +260,14 @@ public class Board {
 		}
 	}
 
+	/**
+	 * @param group: tập các xxx liền kề
+	 * @param isEnemy: true/false
+	 * @return số điểm của group hiện tại
+	 */
 	private int score(Set<Pos> group, boolean isEnemy) {
-		int size = group.size();
-		int open = countOfOpen(group);
+		int size = group.size(); // kích thước hiện tại
+		int open = countOfOpen(group);// số đầu tự do
 		int ratio = isEnemy && size > 2 ? 2 : 1;
 		return ratio * SCORE_TABLE[size - 1][open];
 	}
@@ -269,24 +280,29 @@ public class Board {
 		return player == this.player1 ? this.player2 : this.player1;
 	}
 
+	/**
+	 * @param group
+	 * @return số khả năng mở rộng về 2 phía của 1 group: chặn 2 đầu:0, chặn 1 đầu:
+	 *         1, không chặn: 2
+	 */
 	private int countOfOpen(Set<Pos> group) {
 		List<Pos> poses = new ArrayList<>(group);
 		poses.sort(Comparator.comparing(Pos::getIndex));
 		Pos min = poses.get(0);
 		Pos max = poses.get(poses.size() - 1);
-		if (min.getRow() == max.getRow()) {
+		if (min.getRow() == max.getRow()) { // cùng hàng: check 2 đầu cột để mở rộng
 			return (min.getCol() > 0 && this.grid[min.getRow()][min.getCol() - 1] == EMPTY_CHAR ? 1 : 0)
 					+ (max.getCol() < N_COL - 1 && this.grid[min.getRow()][max.getCol() + 1] == EMPTY_CHAR ? 1 : 0);
-		} else if (min.getCol() == max.getCol()) {
+		} else if (min.getCol() == max.getCol()) {// cùng cột: check 2 đầu cột để mở rộng
 			return (min.getRow() > 0 && this.grid[min.getRow() - 1][min.getCol()] == EMPTY_CHAR ? 1 : 0)
 					+ (max.getRow() < N_ROW - 1 && this.grid[max.getRow() + 1][min.getCol()] == EMPTY_CHAR ? 1 : 0);
 		} else {
-			if (min.getCol() < max.getCol()) {
+			if (min.getCol() < max.getCol()) { // đường chéo 1: check 2 đầu cột để mở rộng
 				return (min.getRow() > 0 && min.getCol() > 0
 						&& this.grid[min.getRow() - 1][min.getCol() - 1] == EMPTY_CHAR ? 1 : 0)
 						+ (max.getRow() < N_ROW - 1 && max.getCol() < N_COL - 1
 								&& this.grid[max.getRow() + 1][max.getCol() + 1] == EMPTY_CHAR ? 1 : 0);
-			} else {
+			} else {// đường chéo 2: check 2 đầu cột để mở rộng
 				return (min.getRow() > 0 && min.getCol() < N_COL - 1
 						&& this.grid[min.getRow() - 1][min.getCol() + 1] == EMPTY_CHAR ? 1 : 0)
 						+ (max.getRow() < N_ROW - 1 && max.getCol() > 0
