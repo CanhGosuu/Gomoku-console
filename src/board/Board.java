@@ -13,10 +13,8 @@ public class Board {
 	private static final int N_COL = 15;
 	private static final char EMPTY_CHAR = '-';
 	private static final int AVAILABLE_DISTANCE = 2;
-	private static final Random RANDOM = new Random();
 	private static final List<Pos> ALL_POS = buildAllPos();
 	private static final List<List<Pos>> BANDS = buildBands();
-	private static final long[][] RANDOM_TABLE = buildRandomTable();
 	private static final Map<Player, Set<Set<Pos>>> GROUPS_CACHE = new HashMap<>();
 	private static final int[][] SCORE_TABLE = { { 1, 1, 1 }, { 5, 10, 20 }, { 10, 500, 1000 }, { 25, 5000, 10000 },
 			{ 1000000, 1000000, 1000000 } };
@@ -33,14 +31,12 @@ public class Board {
 	private final char[][] grid;
 	public final Player player1;
 	public final Player player2;
-	private long hash;
 
 	public Board(Player player1, Player player2) {
 		this.grid = buildGrid();
 		this.player1 = player1;
 		this.player2 = player2;
 		this.status = new GameStatus(Status.ONGOING, null, Collections.emptySet());
-		this.hash = buildHash();
 	}
 
 	public Board(Board other) {
@@ -48,7 +44,6 @@ public class Board {
 		this.player2 = other.player2;
 		this.grid = copyOf(other.grid);
 		this.status = new GameStatus(other.status.getStatus(), other.status.getWinner(), other.status.getWinningSet());
-		this.hash = other.hash;
 	}
 
 	/**
@@ -62,16 +57,6 @@ public class Board {
 			System.arraycopy(src[i], 0, target[i], 0, src[i].length);
 		}
 		return target;
-	}
-
-	private static long[][] buildRandomTable() {
-		long[][] hash = new long[N_ROW * N_COL][3];
-		for (int i = 0; i < N_ROW * N_COL; i++) {
-			for (int j = 0; j < 3; j++) {
-				hash[i][j] = RANDOM.nextLong();
-			}
-		}
-		return hash;
 	}
 
 	/**
@@ -139,14 +124,6 @@ public class Board {
 		return grid;
 	}
 
-	private long buildHash() {
-		long hash = RANDOM.nextLong();
-		for (int i = 0; i < N_ROW * N_COL; i++) {
-			hash ^= RANDOM_TABLE[i][2];
-		}
-		return hash;
-	}
-
 	public boolean mark(Pos pos, Player player) {
 		if ((pos.getRow() < 0 || pos.getRow() > N_ROW - 1) || (pos.getCol() < 0 || pos.getCol() > N_COL - 1)) {
 			System.out.println("Row must between 1 and " + N_ROW + ", Col must between 1 and " + N_COL);
@@ -157,7 +134,6 @@ public class Board {
 			return false;
 		}
 		this.grid[pos.getRow()][pos.getCol()] = player.marker;
-		this.hash ^= RANDOM_TABLE[pos.getIndex()][player == this.player1 ? 0 : 1];
 		scanGroups();
 		selfCheck();
 		return true;
@@ -223,9 +199,6 @@ public class Board {
 		return ALL_POS.stream().noneMatch(p -> this.grid[p.getRow()][p.getCol()] == EMPTY_CHAR);
 	}
 
-	public long hash() {
-		return this.hash;
-	}
 
 	public GameStatus status() {
 		return this.status;
