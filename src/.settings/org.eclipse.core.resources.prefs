@@ -2,3 +2,4 @@ eclipse.preferences.version=1
 encoding//board/Board.java=UTF-8
 encoding//board/GameStatus.java=UTF-8
 encoding//board/Pos.java=UTF-8
+encoding//player/Player.java=UTF-8

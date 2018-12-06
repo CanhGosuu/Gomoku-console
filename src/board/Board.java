@@ -13,7 +13,7 @@ public class Board {
 	private static final int N_COL = 15;
 	private static final char EMPTY_CHAR = '-';
 	private static final int AVAILABLE_DISTANCE = 2;
-	private static final List<Pos> ALL_POS = buildAllPos();
+	private static final List<Pos> ALL_POS = buildAllPos();//
 	private static final List<List<Pos>> BANDS = buildBands();
 	private static final Map<Player, Set<Set<Pos>>> GROUPS_CACHE = new HashMap<>();
 	private static final int[][] SCORE_TABLE = { { 1, 1, 1 }, { 5, 10, 20 }, { 10, 500, 1000 }, { 25, 5000, 10000 },
@@ -48,7 +48,7 @@ public class Board {
 
 	/**
 	 * @param src
-	 * @return copy of matrix src
+	 * @return một ma trận copy từ src
 	 */
 	private static char[][] copyOf(char[][] src) {
 		int length = src.length;
@@ -60,7 +60,7 @@ public class Board {
 	}
 
 	/**
-	 * @return lưu trữ matrix trong list
+	 * @return List lưu trữ khởi tạo vị trí
 	 */
 	private static List<Pos> buildAllPos() {
 		List<Pos> poses = new ArrayList<>();
@@ -73,46 +73,43 @@ public class Board {
 	}
 
 	/**
-	 * @return
+	 * @return List pos theo 4 hướng ( lưu vào BANDS)
 	 */
 	private static List<List<Pos>> buildBands() {
-		Map<Integer, List<Pos>> _map = new HashMap<>();
-		int offset = 2 * (N_ROW + N_COL);
+		Map<Integer, List<Pos>> _hashMap = new HashMap<>();
+		int offset = 2 * (N_ROW + N_COL); // 15 row, 15col, 15 topleft-botright,15 topright-botleft =60
 		for (int i = 0; i < N_ROW; i++) {
 			for (int j = 0; j < N_COL; j++) {
 				// row
-				load(_map, i, new Pos(i, j));
+				load(_hashMap, i, new Pos(i, j));// key=1->14 --
 
 				// col
-				load(_map, j + offset, new Pos(i, j));
+				load(_hashMap, j + offset, new Pos(i, j));// key=60->74 |
 
 				// diagonal
-				load(_map, i + j + 2 * offset, new Pos(i, j));
-				load(_map, i - j + 3 * offset, new Pos(i, j));
+				load(_hashMap, i + j + 2 * offset, new Pos(i, j)); // key=120->148 \
+				load(_hashMap, i - j + 3 * offset, new Pos(i, j));// key= 166->194 /
 			}
 		}
-		return _map.values().stream().filter(l -> l.size() > 1).collect(Collectors.toList());
+		return _hashMap.values().stream().filter(val -> val.size() > 1).collect(Collectors.toList());
 	}
 
 	/**
-	 * @param _map
+	 * @param _map lưu trữ giá trị <key, pos>
+	 * @param pos  không thể ghi đè lên các vị trí => Collections.singletonList(pos)
 	 * @param key
-	 * @param pos  singletonList:Returns an immutable list containing only the
-	 *             specified object.The returned list is serializable.
 	 */
 	private static void load(Map<Integer, List<Pos>> _map, int key, Pos pos) {
-		List<Pos> band = _map.get(key);
-		if (band == null) {
+		List<Pos> _pos = _map.get(key);
+		if (_pos == null) { //
 			_map.put(key, new ArrayList<>(Collections.singletonList(pos)));
 		} else {
-			band.add(pos);
+			_pos.add(pos);
 		}
 	}
 
 	/**
-	 * ma trận 2 chiều cho start
-	 * 
-	 * @return
+	 * @return khởi tạo ma trận. Start game
 	 */
 	private char[][] buildGrid() {
 		char[][] grid = new char[N_ROW][N_COL];
@@ -124,6 +121,11 @@ public class Board {
 		return grid;
 	}
 
+	/**
+	 * @param pos
+	 * @param player
+	 * @return đánh dấu những vị trí đã được đánh và pust vào GROUP_CACHE
+	 */
 	public boolean mark(Pos pos, Player player) {
 		if ((pos.getRow() < 0 || pos.getRow() > N_ROW - 1) || (pos.getCol() < 0 || pos.getCol() > N_COL - 1)) {
 			System.out.println("Row must between 1 and " + N_ROW + ", Col must between 1 and " + N_COL);
@@ -139,6 +141,9 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * check trạng trái sau mỗi lần đánh 
+	 */
 	private void selfCheck() {
 		Set<Set<Pos>> groupsOfP1 = GROUPS_CACHE.get(this.player1);
 		Set<Set<Pos>> groupsOfP2 = GROUPS_CACHE.get(this.player2);
@@ -157,6 +162,9 @@ public class Board {
 		}
 	}
 
+	/**
+	 * scan board và put vào 2 GROUPS_CACHE chứa các group con của 2 người chơi
+	 */
 	private void scanGroups() {
 		Set<Set<Pos>> groupsOfP1 = new HashSet<>();
 		Set<Set<Pos>> groupsOfP2 = new HashSet<>();
@@ -195,20 +203,29 @@ public class Board {
 		GROUPS_CACHE.put(this.player2, groupsOfP2);
 	}
 
+	/**
+	 * @return còn ô trống hay không
+	 */
 	private boolean isDraw() {
 		return ALL_POS.stream().noneMatch(p -> this.grid[p.getRow()][p.getCol()] == EMPTY_CHAR);
 	}
-
 
 	public GameStatus status() {
 		return this.status;
 	}
 
+	/**
+	 * @return list các ứng cử viên cho quân cờ tiếp theo
+	 */
 	public Set<Pos> getChildPos() {
 		return ALL_POS.stream().filter(p -> this.grid[p.getRow()][p.getCol()] == EMPTY_CHAR && hasPlayerAdjacent(p))
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * @param pos là một vị trí trống đang cần xét
+	 * @return kiểm tra xem có quân nào liền kề không
+	 */
 	private boolean hasPlayerAdjacent(Pos pos) {
 		int rowL = pos.getRow() - AVAILABLE_DISTANCE < 0 ? 0 : pos.getRow() - AVAILABLE_DISTANCE;
 		int colL = pos.getCol() - AVAILABLE_DISTANCE < 0 ? 0 : pos.getCol() - AVAILABLE_DISTANCE;
@@ -244,6 +261,10 @@ public class Board {
 		return ratio * SCORE_TABLE[size - 1][open];
 	}
 
+	/**
+	 * @param player
+	 * @return chuyển người chơi tiếp theo
+	 */
 	public Player getEnemy(Player player) {
 		return player == this.player1 ? this.player2 : this.player1;
 	}
@@ -274,6 +295,9 @@ public class Board {
 		}
 	}
 
+	/**
+	 * @done
+	 */
 	public void start() {
 		print();
 		while (!this.status.isGameOver()) {
@@ -293,6 +317,9 @@ public class Board {
 		}
 	}
 
+	/**
+	 * @done
+	 */
 	public void print() {
 		System.out.println();
 		System.out.println();
@@ -334,10 +361,17 @@ public class Board {
 		}
 	}
 
+	/**
+	 * @param player
+	 * @return string: vị trí đánh
+	 */
 	private String buildPlayerInfo(Player player) {
 		return player + "  Step: " + player.step() + "  Last Pos: " + player.getLastPos();
 	}
 
+	/**
+	 * @done
+	 */
 	private void pause() {
 		System.out.println("[Print any key to continue]");
 		final Scanner cin = new Scanner(System.in);
