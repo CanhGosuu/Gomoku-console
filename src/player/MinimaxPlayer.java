@@ -22,9 +22,9 @@ public class MinimaxPlayer extends Player {
     }
 
     private int[][] buildHistory() {
-        int[][] history = new int[Board.N_ROW][Board.N_COL];
-        for (int i = 0; i < Board.N_ROW; i++) {
-            for (int j = 0; j < Board.N_COL; j++) {
+        int[][] history = new int[Board.getnRow()][Board.getnCol()];
+        for (int i = 0; i < Board.getnRow(); i++) {
+            for (int j = 0; j < Board.getnCol(); j++) {
                 history[i][j] = 0;
             }
         }
@@ -32,8 +32,8 @@ public class MinimaxPlayer extends Player {
     }
 
     private Move first() {
-        return new Move(0, new Pos(Board.N_ROW / 4 + RANDOM.nextInt(Board.N_ROW) / 2,
-                Board.N_COL / 4 + RANDOM.nextInt(Board.N_COL) / 2));
+        return new Move(0, new Pos(Board.getnRow() / 4 + RANDOM.nextInt(Board.getnRow()) / 2,
+                Board.getnCol() / 4 + RANDOM.nextInt(Board.getnCol()) / 2));
     }
 
     @Override

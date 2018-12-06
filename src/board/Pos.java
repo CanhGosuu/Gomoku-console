@@ -1,7 +1,8 @@
 package board;
+
 /**
  * @author CanhGosuu
- *
+ * @done
  */
 public class Pos {
 	private final int row;
@@ -9,7 +10,7 @@ public class Pos {
 	private final int index;
 
 	/**
-	 * @param row  
+	 * @param row
 	 * @param col
 	 */
 	public Pos(int row, int col) {
@@ -20,7 +21,7 @@ public class Pos {
 	}
 
 	/**
-	 * @param index vị trí tham chiếu trong board
+	 * @param index :tham chiếu trong board
 	 */
 	Pos(int index) {
 		super();

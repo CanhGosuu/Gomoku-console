@@ -4,9 +4,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import player.*;
 
+/**
+ * @author CanhGosuu
+ *
+ */
 public class Board {
-	public static final int N_ROW = 15;
-	public static final int N_COL = 15;
+	private static final int N_ROW = 15;
+	private static final int N_COL = 15;
 	private static final char EMPTY_CHAR = '-';
 	private static final int AVAILABLE_DISTANCE = 2;
 	private static final Random RANDOM = new Random();
@@ -108,8 +112,8 @@ public class Board {
 	/**
 	 * @param _map
 	 * @param key
-	 * @param pos
-	 * singletonList:Returns an immutable list containing only the specified object.The returned list is serializable.
+	 * @param pos  singletonList:Returns an immutable list containing only the
+	 *             specified object.The returned list is serializable.
 	 */
 	private static void load(Map<Integer, List<Pos>> _map, int key, Pos pos) {
 		List<Pos> band = _map.get(key);
@@ -367,9 +371,5 @@ public class Board {
 		cin.useDelimiter("\n");
 		cin.nextLine();
 		// cin.close();
-	}
-
-	public enum Status {
-		P1_WIN, P2_WIN, DRAW, ONGOING
 	}
 }

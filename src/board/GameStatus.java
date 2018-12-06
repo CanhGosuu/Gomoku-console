@@ -1,59 +1,68 @@
 package board;
 import java.util.Set;
-
-import board.Board.Status;
 import player.*;
+
+
+/**
+ * @author CanhGosuu
+ * @done
+ */
 public class GameStatus {
 
-	    protected Status status;
-	    protected Player winner;
-	    protected Set<Pos> winningSet;
+	protected Status status;
+	protected Player winner;
+	protected Set<Pos> winningSet;
 
-        public GameStatus(Status status, Player winner, Set<Pos> winningSet) {
-            
-            this.status = status;
-            this.winner = winner;
-            this.winningSet = winningSet;
-        }
+	/**
+	 * @param status trạng thái hiện tại của game
+	 * @param winner
+	 * @param winningSet
+	 */
+	public GameStatus(Status status, Player winner, Set<Pos> winningSet) {
 
-        public Status getStatus() {
-            return status;
-        }
+		this.status = status;
+		this.winner = winner;
+		this.winningSet = winningSet;
+	}
 
-        public Player getWinner() {
-            return winner;
-        }
+	public Status getStatus() {
+		return status;
+	}
 
-        public Set<Pos> getWinningSet() {
-            return winningSet;
-        }
+	public Player getWinner() {
+		return winner;
+	}
 
-        public void setStatus(Status status) {
-            this.status = status;
-        }
+	public Set<Pos> getWinningSet() {
+		return winningSet;
+	}
 
-        public void setWinner(Player winner) {
-            this.winner = winner;
-        }
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 
-        public void setWinningSet(Set<Pos> winningSet) {
-            this.winningSet = winningSet;
-        }
+	public void setWinner(Player winner) {
+		this.winner = winner;
+	}
 
-        @Override
-        public String toString() {
-            return "GameStatus [status=" + status + ", winner=" + winner + ", winningSet=" + winningSet + "]";
-        }
+	public void setWinningSet(Set<Pos> winningSet) {
+		this.winningSet = winningSet;
+	}
 
-        public boolean isGameOver() {
-            return this.status != Status.ONGOING;
-        }
+	@Override
+	public String toString() {
+		return "GameStatus [status=" + status + ", winner=" + winner + ", winningSet=" + winningSet + "]";
+	}
 
-        public boolean isDraw() {
-            return this.status == Status.DRAW;
-        }
+	public boolean isGameOver() {
+		return this.status != Status.ONGOING;
+	}
 
-        public boolean isWinning() {
-            return this.status == Status.P1_WIN || this.status == Status.P2_WIN;
-        }
-    }
+	public boolean isDraw() {
+		return this.status == Status.DRAW;
+	}
+
+	public boolean isWinning() {
+		return this.status == Status.P1_WIN || this.status == Status.P2_WIN;
+	}
+}
