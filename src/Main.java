@@ -54,7 +54,7 @@ public class Main {
 			System.out.println("Please choose game level for Computer1 (1~5)");
 			int level1 = CIN.nextInt();
 			while (level1 < 1 || level1 > 5) {
-				System.out.println("Level must be between 1 and 4");
+				System.out.println("Level must be between 1 and 5");
 				level1 = CIN.nextInt();
 			}
 

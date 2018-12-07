@@ -14,12 +14,22 @@ public abstract class Player {
 	private final List<Long> times;
 	private final List<Pos> path;
 	private int score;
+	private int bestDepth;
 
 	public Player(char marker) {
 		this.marker = marker;
 		this.times = new ArrayList<>();
 		this.path = new ArrayList<>();
 		this.setScore(0);
+		this.setBestDepth(0);
+	}
+
+	public int getBestDepth() {
+		return bestDepth;
+	}
+
+	public void setBestDepth(int bestDepth) {
+		this.bestDepth = bestDepth;
 	}
 
 	public long time() {
@@ -65,7 +75,7 @@ public abstract class Player {
 		long end = System.nanoTime();
 		this.times.add(end - start);
 		this.path.add(move.getNext());
-		this.score=move.getScore();
+		this.score = move.getScore();
 		return move.getNext();
 	}
 

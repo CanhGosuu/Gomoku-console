@@ -322,12 +322,12 @@ public class Board {
 				break;
 			}
 			if (this.player1 instanceof MinimaxPlayer && this.player2 instanceof MinimaxPlayer) {
-				pause();
+				// pause();
 			}
 			this.player2.next(this);
 			print();
 			if (this.player1 instanceof MinimaxPlayer && this.player2 instanceof MinimaxPlayer) {
-				pause();
+				// pause();
 			}
 		}
 	}
@@ -381,8 +381,8 @@ public class Board {
 	 * @return string: vị trí đánh
 	 */
 	private String buildPlayerInfo(Player player) {
-		return player + "  Step: " + player.step() + "  Last Pos: " + player.getLastPos() + "  Score: "
-				+ player.getScore();
+		return player + "  Step: " + player.step() + "  Last Pos: " + player.getLastPos() + "  Depth: "
+				+ player.getBestDepth() + "  Score: " + player.getScore();
 	}
 
 	/**
