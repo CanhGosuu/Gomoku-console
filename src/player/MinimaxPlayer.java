@@ -1,4 +1,5 @@
 package player;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -7,7 +8,8 @@ import java.util.stream.Collectors;
 import board.*;
 
 /**
- * Created by Canh on 3/12/2018.
+ * @author CanhGosuu
+ *
  */
 public class MinimaxPlayer extends Player {
     private static final Random RANDOM = new Random();
@@ -21,6 +23,9 @@ public class MinimaxPlayer extends Player {
         this.history = buildHistory();
     }
 
+    /**
+     * @return ma trận 2 chiều lưu trữ độ sâu của nút tại thời điểm đang xét
+     */
     private int[][] buildHistory() {
         int[][] history = new int[Board.getnRow()][Board.getnCol()];
         for (int i = 0; i < Board.getnRow(); i++) {
@@ -31,11 +36,19 @@ public class MinimaxPlayer extends Player {
         return history;
     }
 
+    /**
+     * @return first Move is a random move from 4->11
+     */
     private Move first() {
         return new Move(0, new Pos(Board.getnRow() / 4 + RANDOM.nextInt(Board.getnRow()) / 2,
                 Board.getnCol() / 4 + RANDOM.nextInt(Board.getnCol()) / 2));
     }
 
+    /*
+     * @see player.Player#decide(board.Board)
+     * 
+     * @return next move depend alphabeta pruining
+     */
     @Override
     protected Move decide(Board board) {
         if (this.step() <= 0 && board.getEnemy(this).step() <= 0) {
@@ -44,6 +57,20 @@ public class MinimaxPlayer extends Player {
             alphaBeta(board, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, this);
             return this.best;
         }
+    }
+
+    /**
+     * @param board
+     * @return List pos sắp xếp theo độ sâu tăng dần
+     */
+    private List<Pos> sortChildPos(Board board) {
+        return board.getChildPos().stream().sorted(new Comparator<Pos>() {
+            @Override
+            public int compare(Pos o1, Pos o2) {
+                return Integer.compare(MinimaxPlayer.this.history[o2.getRow()][o2.getCol()],
+                        MinimaxPlayer.this.history[o1.getRow()][o1.getCol()]);
+            }
+        }).collect(Collectors.toList());
     }
 
     private int alphaBeta(Board board, int depth, int alpha, int beta, Player player) {
@@ -86,13 +113,4 @@ public class MinimaxPlayer extends Player {
         return v;
     }
 
-    private List<Pos> sortChildPos(Board board) {
-        return board.getChildPos().stream().sorted(new Comparator<Pos>() {
-            @Override
-            public int compare(Pos o1, Pos o2) {
-                return Integer.compare(MinimaxPlayer.this.history[o2.getRow()][o2.getCol()],
-                        MinimaxPlayer.this.history[o1.getRow()][o1.getCol()]);
-            }
-        }).collect(Collectors.toList());
-    }
 }

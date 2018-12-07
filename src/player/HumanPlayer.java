@@ -1,10 +1,12 @@
 package player;
+
 import java.util.Scanner;
 import board.Board;
 import board.Pos;
 
 /**
- * Created by Canh on 3/12/2018.
+ * @author CanhGosuu
+ * @done
  */
 public class HumanPlayer extends Player {
     private static final String INTEGER_PATTERN = "\\d+";
@@ -14,6 +16,11 @@ public class HumanPlayer extends Player {
         super(marker);
     }
 
+    /*
+     * @see player.Player#decide(board.Board)*
+     * 
+     * @return new Move if validate Move
+     */
     @Override
     protected Move decide(Board board) {
         System.out.println(this + " please input row and col");

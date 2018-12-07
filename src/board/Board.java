@@ -5,8 +5,7 @@ import java.util.stream.Collectors;
 import player.*;
 
 /**
- * @author CanhGosuu
- * @done? quite good but not evaluate
+ * @author CanhGosuu @done? quite good but not evaluate
  */
 public class Board {
 	private static final int N_ROW = 15;
@@ -244,8 +243,8 @@ public class Board {
 
 	/**
 	 * @param player
-	 * @param _depth: độ sâu cao nhất trừ độ sâu của điểm đang xét=> c
-	 * @return	điểm đánh giá của các ứng cử viên 
+	 * @param        _depth: độ sâu cao nhất trừ độ sâu của điểm đang xét
+	 * @return điểm đánh giá của các ứng cử viên
 	 */
 	public int evaluate(Player player, int _depth) {
 		if (this.status.isWinning()) {
@@ -382,7 +381,8 @@ public class Board {
 	 * @return string: vị trí đánh
 	 */
 	private String buildPlayerInfo(Player player) {
-		return player + "  Step: " + player.step() + "  Last Pos: " + player.getLastPos();
+		return player + "  Step: " + player.step() + "  Last Pos: " + player.getLastPos() + "  Score: "
+				+ player.getScore();
 	}
 
 	/**
