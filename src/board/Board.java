@@ -381,8 +381,9 @@ public class Board {
 	 * @return string: vị trí đánh
 	 */
 	private String buildPlayerInfo(Player player) {
+		double seconds = (double) player.getLastTime() / 1_000_000_000.0;
 		return player + "  Step: " + player.step() + "  Last Pos: " + player.getLastPos() + "  Depth: "
-				+ player.getBestDepth() + "  Score: " + player.getScore();
+				+ player.getBestDepth() + "  Score: " + player.getScore() + "  Time: " + seconds + " seconds.";
 	}
 
 	/**
