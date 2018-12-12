@@ -18,13 +18,4 @@
 
 ## Usage
 
-```
-cd src
-[ del /f *.class ]
-javac -sourcepath ../src -d ./ ../src/*.java
-java Main
-```
-
----
-
 [_Created by awesome people_](https://tacaocanh.000webhostapp.com)
