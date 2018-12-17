@@ -389,11 +389,11 @@ public class Board {
 	/**
 	 * @done
 	 */
-	private void pause() {
-		System.out.println("[Print any key to continue]");
-		final Scanner cin = new Scanner(System.in);
-		cin.useDelimiter("\n");
-		cin.nextLine();
-		// cin.close();
-	}
+	// private void pause() {
+	// System.out.println("[Print any key to continue]");
+	// final Scanner cin = new Scanner(System.in);
+	// cin.useDelimiter("\n");
+	// cin.nextLine();
+	// // cin.close();
+	// }
 }
